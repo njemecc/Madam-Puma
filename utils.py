@@ -17,4 +17,6 @@ def play_audio(file_path):
     pygame.mixer.music.play()
     # Wait until the audio is finished playing
     while pygame.mixer.music.get_busy():
-        time.sleep(1)
+      time.sleep(1)
+    pygame.mixer.music.stop()
+    pygame.mixer.quit()
