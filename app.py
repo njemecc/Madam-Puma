@@ -1,28 +1,9 @@
 from openai import OpenAI
 import speech_recognition as sr
-import pygame
-import time
 from dotenv import load_dotenv
 import os
-
-
-def record_audio(file_path):
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Please say something...")
-        audio_data = recognizer.listen(source)
-        print("Recording complete.")
-        with open(file_path, "wb") as audio_file:
-            audio_file.write(audio_data.get_wav_data())
-
-def play_audio(file_path):
-    pygame.mixer.init()
-    pygame.mixer.music.load(file_path)
-    pygame.mixer.music.play()
-    # Wait until the audio is finished playing
-    while pygame.mixer.music.get_busy():
-        time.sleep(1)
-
+from utils import record_audio
+from utils import play_audio
 
 load_dotenv()
 api_key = os.getenv("OPENAI_SECRET_KEY")
@@ -49,11 +30,16 @@ while True:
 
   print(response.choices[0].message.content)
 
+ 
+
   response = client.audio.speech.create(
     model="tts-1",
     voice="nova",
     input=response.choices[0].message.content
   )
+
+  if os.path.exists("output.mp3"):
+            os.remove("output.mp3")
 
   response.stream_to_file('output.mp3')
   play_audio('output.mp3')
